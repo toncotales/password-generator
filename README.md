@@ -27,8 +27,8 @@ pg = PasswordGenerator()
 password = pg.generate(length=12)
 print(password)
 ```
-# Contributing
-If you'd like to contribute to the project, feel free to fork the repository, create a branch, and submit a pull request with your changes. Contributions are always welcome!
+## Contributing
+Feel free to fork this repository, make improvements, or report issues. Contributions are welcome!
 
-# License
-This project is licensed under the MIT License - see the <LICENSE> file for details.
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
