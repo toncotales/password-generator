@@ -33,16 +33,16 @@ def main():
 		description="Generate a strong random password string.",
 		epilog="INFO: The default excluded characters are []{}()\"'` ",
 		)
-	parser.add_argument("-s", "--size", metavar="",  type=int, default=10, help="length of the password")
+	parser.add_argument("-l", "--length", metavar="",  type=int, default=12, help="length of the password")
 	parser.add_argument("-a", "--all", action="store_true", help="use all special characters")
 	arguments = parser.parse_args()
 	password = PasswordGenerator()
-	print(password.generate(arguments.size, all_characters=arguments.all))
+	print(password.generate(length=arguments.length, all_characters=arguments.all))
 
 
 class PasswordGenerator:
 
-	MIN_LENGTH = 10
+	MIN_LENGTH = 12
 	MAX_LENGTH = 64
 	EXCLUDED_CHARACTERS = "[]{}()\"'`"
 
