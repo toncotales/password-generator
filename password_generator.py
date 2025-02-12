@@ -25,7 +25,6 @@
 import string
 import random
 import argparse
-import collections
 
 
 def main():
@@ -68,8 +67,8 @@ class PasswordGenerator:
 				if character.isalpha():  # Create the password starting with a letter
 					password += character
 		# Check if the password string has atleast two symbol characters.
-		count = collections.Counter(list(map(self._char_type, list(password))))
-		if count['symbol'] >= 2:
+		char_type_list = list(map(self._char_type, list(password)))
+		if char_type_list.count('symbol') >= 2:
 			return password
 		else:
 			return self.generate(length, all_characters)
