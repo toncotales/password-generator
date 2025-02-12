@@ -1,7 +1,7 @@
 # ===================================================================
 # MIT License
 #
-# Copyright (c) 2025 Anthony Cotales <ton.cotales@gmail.com>
+# Copyright (c) 2025 Anthony Cotales
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -74,9 +74,9 @@ class PasswordGenerator:
 
 	def _sample(self, all_characters=False) -> str:
 		if not all_characters:
-			removed = set(string.punctuation).difference(set(self.EXCLUDED_CHARACTERS))
+			punctuation = set(string.punctuation).difference(set(self.EXCLUDED_CHARACTERS))
 			self.character_groups.pop()
-			self.character_groups.append(''.join(list(removed)))
+			self.character_groups.append(''.join(list(punctuation)))
 		result = list()
 		for group in self.character_groups:
 			result += random.sample(group, k=2)
@@ -88,7 +88,6 @@ class PasswordGenerator:
 		if char.islower(): return 'lowercase'
 		if char.isdigit(): return 'digit'
 		if not char.isalnum(): return 'symbol'
-		if char.isspace(): return 'space'
 
 
 if __name__ == '__main__':
