@@ -44,7 +44,7 @@ def main():
 class PasswordGenerator:
 
 	MIN_LENGTH = 12
-	MAX_LENGTH = 64
+	MAX_LENGTH = 72
 	EXCLUDED_CHARACTERS = "[]{}()\"'`"
 
 	def __init__(self):
