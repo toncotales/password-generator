@@ -68,7 +68,7 @@ class PasswordGenerator:
 				if character.isalpha():  # Create the password starting with a letter
 					password += character
 		# Check if the password string has atleast two symbol characters.
-		count = collections.Counter(list(map(self._char_type, list(password))), 'symbol')
+		count = collections.Counter(list(map(self._char_type, list(password))))
 		if count['symbol'] == 2:
 			return password
 		else:
