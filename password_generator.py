@@ -69,7 +69,7 @@ class PasswordGenerator:
 					password += character
 		# Check if the password string has atleast two symbol characters.
 		count = collections.Counter(list(map(self._char_type, list(password))))
-		if count['symbol'] == 2:
+		if count['symbol'] >= 2:
 			return password
 		else:
 			return self.generate(length, all_characters)
