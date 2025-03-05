@@ -1,95 +1,91 @@
-# ===================================================================
-# MIT License
-#
-# Copyright (c) 2025 Anthony Cotales
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-# ===================================================================
-
-import string
 import random
+import string
 import argparse
 
 
-def main():
-	parser = argparse.ArgumentParser(
-		prog="password_generator.py",
-		description="Generate a strong random password string.",
-		epilog="INFO: The default excluded characters are []{}()\"'` ",
-		)
-	parser.add_argument("-l", "--length", metavar="",  type=int, default=12, help="length of the password")
-	parser.add_argument("-a", "--all", action="store_true", help="use all special characters")
-	arguments = parser.parse_args()
-	password = PasswordGenerator()
-	print(password.generate(length=arguments.length, all_characters=arguments.all))
-
 
 class PasswordGenerator:
+	# Excluded characters are brackets, quotes, slashes, semicolon and comma
+	EXCLUDED_CHARACTERS = "[]{}()<>\"'`/\\;,"
 
-	MIN_LENGTH = 12
-	MAX_LENGTH = 72
-	EXCLUDED_CHARACTERS = "[]{}()\"'`"
+	CHARACTER_GROUPS = [
+		string.ascii_lowercase,
+		string.ascii_uppercase,
+		string.digits,
+		string.punctuation
+	]
 
-	def __init__(self):
-		self.character_groups = [
-			string.ascii_lowercase,
-			string.ascii_uppercase,
-			string.digits,
-			string.punctuation
-		]
+	def __init__(self, length: int, all_characters=False):
 
-	def generate(self, length: int, all_characters=False) -> str:
-		length = min(max(length, self.MIN_LENGTH), self.MAX_LENGTH)
-		password = str()
-		while length > len(password):
-			character = random.choice(self._sample(all_characters))
-			if password:
-				if self._char_type(password[-1]) != self._char_type(character):
-					if character not in password:
-						password += character
-			else:
-				if character.isalpha():  # Create the password starting with a letter
+		self.min_length = 12
+		self.max_length = sum(map(len, self.CHARACTER_GROUPS)) - len(self.EXCLUDED_CHARACTERS)
+
+		if not isinstance(length, int):
+			raise TypeError("length must be an integer")
+
+		self.length = min(max(length, self.min_length), self.max_length)
+		self.all_characters = True if self.length == self.max_length else all_characters
+
+	def generate(self) -> str:
+		while True:
+			password = self._create_password()
+			character_types = list(map(self._character_type, password))
+
+			if character_types.count('punctuation') >= 2 and character_types.count('uppercase') >= 2:
+				return password
+
+	def _create_password(self) -> str:
+		password = ''
+		while len(password) < self.length:
+			character = random.choice(self._get_random_sample())
+
+			if password and self._character_type(password[-1]) != self._character_type(character):
+				if character not in password:
 					password += character
-		# Check if the password string has atleast two symbol characters.
-		char_type_list = list(map(self._char_type, list(password)))
-		if char_type_list.count('symbol') >= 2:
-			return password
-		else:
-			return self.generate(length, all_characters)
 
-	def _sample(self, all_characters=False) -> str:
-		if not all_characters:
-			punctuation = set(string.punctuation).difference(set(self.EXCLUDED_CHARACTERS))
-			self.character_groups.pop()
-			self.character_groups.append(''.join(list(punctuation)))
-		result = list()
-		for group in self.character_groups:
-			result += random.sample(group, k=2)
-			random.shuffle(result)
+			elif not password and character.isalpha():
+				password += character
+
+		return password
+
+	def _get_random_sample(self) -> str:
+		if not self.all_characters:
+			punctuation = set(string.punctuation) - set(self.EXCLUDED_CHARACTERS)
+			character_groups = self.CHARACTER_GROUPS[:-1] + [''.join(punctuation)]
+		else:
+			character_groups = self.CHARACTER_GROUPS
+
+		result = []
+		for index, group in enumerate(character_groups):
+			sample_size = 3 if index % 2 == 0 else 2
+			result.extend(random.sample(group, k=sample_size))
+
 		return ''.join(result)
 
-	def _char_type(self, char: str) -> str:
-		if char.isupper(): return 'uppercase'
-		if char.islower(): return 'lowercase'
-		if char.isdigit(): return 'digit'
-		if not char.isalnum(): return 'symbol'
+	def _character_type(self, character: str) -> str:
+		if character.isupper(): return 'uppercase'
+		if character.islower(): return 'lowercase'
+		if character.isdigit(): return 'digit'
+		if character in string.punctuation: return 'punctuation'
+		return 'other'
 
 
-if __name__ == '__main__':
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Generate a secure password."
+    )
+    parser.add_argument("-l", "--length", type=int, default=12, help="Specify password length (minimum 12)")
+    parser.add_argument("-a", "--all", action="store_true", help="Include all characters, including excluded ones")
+
+    args = parser.parse_args()
+
+    generator = PasswordGenerator(length=args.length, all_characters=args.all)
+    password = generator.generate()
+    print(password)
+
+
+if __name__ == "__main__":
 	main()
+
+
