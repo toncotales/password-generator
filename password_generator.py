@@ -5,9 +5,7 @@ import argparse
 
 
 class PasswordGenerator:
-	# Excluded characters are brackets, quotes, slashes, semicolon and comma
-	EXCLUDED_CHARACTERS = "[]{}()<>\"'`/\\;,"
-
+	
 	CHARACTER_GROUPS = [
 		string.ascii_lowercase,
 		string.ascii_uppercase,
@@ -15,16 +13,19 @@ class PasswordGenerator:
 		string.punctuation
 	]
 
-	def __init__(self, length: int, all_characters=False):
+	# Excluded characters are brackets, quotes, slashes, semicolon and comma
+	EXCLUDED_CHARACTERS = "[]{}()<>\"'`/\\;,"
 
-		self.min_length = 12
-		self.max_length = sum(map(len, self.CHARACTER_GROUPS)) - len(self.EXCLUDED_CHARACTERS)
+	MIN_LENGTH = 12
+	MAX_LENGTH = sum(map(len, CHARACTER_GROUPS)) - len(EXCLUDED_CHARACTERS)
+
+	def __init__(self, length: int, all_characters=False):
 
 		if not isinstance(length, int):
 			raise TypeError("length must be an integer")
 
-		self.length = min(max(length, self.min_length), self.max_length)
-		self.all_characters = True if self.length == self.max_length else all_characters
+		self.length = min(max(length, self.MIN_LENGTH), self.MAX_LENGTH)
+		self.all_characters = True if self.length == self.MAX_LENGTH else all_characters
 
 	def generate(self) -> str:
 		while True:
@@ -70,11 +71,8 @@ class PasswordGenerator:
 		return 'other'
 
 
-
 def main():
-    parser = argparse.ArgumentParser(
-        description="Generate a secure password."
-    )
+    parser = argparse.ArgumentParser(description="Generate a secure password.")
     parser.add_argument("-l", "--length", type=int, default=12, help="Specify password length (minimum 12)")
     parser.add_argument("-a", "--all", action="store_true", help="Include all characters, including excluded ones")
 
@@ -87,5 +85,3 @@ def main():
 
 if __name__ == "__main__":
 	main()
-
-
