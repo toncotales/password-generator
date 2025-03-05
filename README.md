@@ -15,7 +15,7 @@ git clone https://github.com/toncotales/password-generator.git
 ```
 ### Run the script:
 ```bash
-python password_generator.py
+python password_generator.py --length 16 --all
 ```
 
 ### Example Usage:
